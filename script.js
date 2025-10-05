@@ -1,82 +1,44 @@
-// Wait for the page to finish loading
 document.addEventListener('DOMContentLoaded', () => {
-  
+  // Select key elements
   const addButton = document.getElementById('add-task-btn');
   const taskInput = document.getElementById('task-input');
   const taskList = document.getElementById('task-list');
 
-  let tasks = [];
+  // Function to handle adding a new task
+  const addTask = () => {
+    const taskText = taskInput.value.trim();
 
-  // Save all tasks to local storage
-  function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }
-
-  // Add a single task to the list
-  function addTask(taskText, save = true) {
-    // If no taskText passed, get it from the input
     if (!taskText) {
-      taskText = taskInput.value.trim();
-    }
-
-    if (taskText === '') {
-      alert('Please enter a task');
+      alert('Please enter a task.');
       return;
     }
 
+    // Create new list item
     const li = document.createElement('li');
-    const span = document.createElement('span');
-    span.textContent = taskText;
-    li.appendChild(span);
+    li.textContent = taskText;
 
     // Create remove button
     const removeBtn = document.createElement('button');
     removeBtn.textContent = 'Remove';
-    removeBtn.classList.add('remove-btn');
+    removeBtn.className = 'remove-btn';
 
-    // Handle task removal
+    // Handle remove click
     removeBtn.addEventListener('click', () => {
       li.remove();
-      const index = tasks.indexOf(taskText);
-      if (index > -1) {
-        tasks.splice(index, 1);
-        saveTasks();
-      }
     });
 
+    // Append elements
     li.appendChild(removeBtn);
     taskList.appendChild(li);
 
-    // Save new task
-    if (save) {
-      tasks.push(taskText);
-      saveTasks();
-    }
-
+    // Clear input
     taskInput.value = '';
-  }
+  };
 
-  // Load saved tasks from local storage
-  function loadTasks() {
-    const stored = localStorage.getItem('tasks');
-    if (stored) {
-      tasks = JSON.parse(stored);
-      tasks.forEach(t => addTask(t, false));
-    }
-  }
+  // Event listeners
+  addButton.addEventListener('click', addTask);
 
-  // Add task on button click
-  addButton.addEventListener('click', () => {
-    addTask();
-  });
-
-  // Add task when pressing Enter key
   taskInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-      addTask();
-    }
+    if (e.key === 'Enter') addTask();
   });
-
-  // Load tasks when the page opens
-  loadTasks();
 });
